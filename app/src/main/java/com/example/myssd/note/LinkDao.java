@@ -25,4 +25,6 @@ public interface LinkDao {
 
     @Query("SELECT COUNT(*) from LINK")
     int countLinks();
+    @Query("DELETE FROM link")
+    void delete();
 }
