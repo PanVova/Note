@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
        // toolbar.setBackgroundColor(Color.parseColor("#80000000"));
         setSupportActionBar(toolbar);
     }
+    //smth changes
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
