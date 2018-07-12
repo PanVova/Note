@@ -2,6 +2,8 @@ package com.example.myssd.note;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,6 +13,7 @@ import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -18,37 +21,50 @@ import android.widget.Toast;
 
 public class Second extends AppCompatActivity {
     private Toolbar toolbar;
-    private EditText mTitleText;
     private EditText mBodyText;
+
+    void sendMessage(String msg) {
+        Intent myIntent = new Intent(Intent.ACTION_SEND);
+        myIntent.setType("text/plain");
+        myIntent.putExtra(Intent.EXTRA_TEXT, msg);//
+        startActivity(myIntent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
         toolbar = findViewById(R.id.my_toolbar);
+        Bundle extras = getIntent().getExtras();
         // toolbar.setBackgroundColor(Color.parseColor("#80000000"));
         setSupportActionBar(toolbar);
+        setTitle(extras.getString("name"));
         mBodyText = (EditText) findViewById(R.id.body);
+
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_second_main, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.edit:
-                Toast.makeText(getApplicationContext(), "Everything is working fine ", Toast.LENGTH_SHORT).show();
+            case R.id.save:
+                //добавить бд
+                Toast.makeText(getApplicationContext(), "Save ", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.share:
-                Toast.makeText(getApplicationContext(), "Everything is working fine ", Toast.LENGTH_SHORT).show();
+                sendMessage(mBodyText.getText().toString());
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
 
         }
     }
+
     @SuppressLint("AppCompatCustomView")
     public static class LinedEditText extends EditText {
         private Rect mRect;

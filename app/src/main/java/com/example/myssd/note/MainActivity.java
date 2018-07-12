@@ -33,9 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    final String[] catNames = new String[]{
-            "Рыжик", "Барсик", "Мурзик", "Мурка", "Васька"
-    };
     String name;
     ListView listView;
     Context x = this;
@@ -48,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     Map<Link, String> sort_date = new HashMap<Link, String>();
     Map<Link, String> sort_alpha = new HashMap<Link, String>();
 
-    void oclbtn() {
+    void addbutton() {
         LinearLayout lila1 = new LinearLayout(x);
         final EditText input = new EditText(x);
         input.setHint("Name");
@@ -59,14 +56,12 @@ public class MainActivity extends AppCompatActivity {
         alert.setTitle("Add note");
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int arg1) {
-                if(input.getText().toString()!=null)
-                {
+                if (input.getText().toString() != null) {
                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                     Date date = new Date();
                     String date_local = dateFormat.format(date);
                     DatabaseInintializer.populateSync(AppDatabase.getAppDatabase(x));
                     DatabaseInintializer.addLink(AppDatabase.getAppDatabase(x), new com.example.myssd.note.modul.Link(input.getText().toString(), 1, date_local));
-                    int count = DatabaseInintializer.getCount(AppDatabase.getAppDatabase(x));
                     links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(x));
                     local = new ArrayList<>(links);
                     linkAd = new LinkAdapter(x, android.R.layout.simple_list_item_1, local);
@@ -84,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
     private static HashMap sortByDate(HashMap map) {
         List list = new LinkedList(map.entrySet());
         // Defined Custom Comparator here
@@ -93,12 +89,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         HashMap sortedHashMap = new LinkedHashMap();
-        for (Iterator it = list.iterator(); it.hasNext();) {
+        for (Iterator it = list.iterator(); it.hasNext(); ) {
             Map.Entry entry = (Map.Entry) it.next();
             sortedHashMap.put(entry.getKey(), entry.getValue());
         }
         return sortedHashMap;
     }
+
     private static HashMap sortByAlpha(HashMap map) {
         List list = new LinkedList(map.entrySet());
         // Defined Custom Comparator here
@@ -108,29 +105,38 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         HashMap sortedHashMap = new LinkedHashMap();
-        for (Iterator it = list.iterator(); it.hasNext();) {
+        for (Iterator it = list.iterator(); it.hasNext(); ) {
             Map.Entry entry = (Map.Entry) it.next();
             sortedHashMap.put(entry.getKey(), entry.getValue());
         }
         return sortedHashMap;
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         listView = (ListView) findViewById(R.id.listview);
-        //  ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, catNames);
-        // listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(x, Second.class);
+                int count = 0;
+                for (Link loc : links) {
+                    //
+                    if(position==count)
+                    {
+                        Log.d(String.valueOf(position), loc.getJust_link());
+                        i.putExtra( "name",loc.getJust_link());
+                        break;
+                    }
+                    count++;
+                }
                 startActivity(i);
             }
         });
         toolbar = findViewById(R.id.my_toolbar);
-        // toolbar.setBackgroundColor(Color.parseColor("#80000000"));
         setSupportActionBar(toolbar);
         links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(this));
         local = new ArrayList<>(links);
@@ -145,30 +151,25 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.sort_date:
-                for(Link loc : links){sort_date.put(loc, loc.getDate());}
+                for (Link loc : links) {
+                    sort_date.put(loc, loc.getDate());
+                }
                 Map<Link, String> map = sortByDate((HashMap) sort_date);
                 local = new ArrayList<>(map.keySet());
-                linkAd = new LinkAdapter(this, android.R.layout.simple_list_item_1, local );
+                linkAd = new LinkAdapter(this, android.R.layout.simple_list_item_1, local);
                 listView.setAdapter(linkAd);
                 return true;
             case R.id.sort_alphabetically:
-
-                 for(Link loc : links){
-                     sort_alpha.put(loc, loc.getJust_link());
-                     Log.d("SMTH",loc.getJust_link());
-                 }
+                for (Link loc : links) {
+                    sort_alpha.put(loc, loc.getJust_link());
+                }
                 Map<Link, String> map1 = sortByAlpha((HashMap) sort_alpha);
-
                 local = new ArrayList<>(map1.keySet());
-                linkAd = new LinkAdapter(this, android.R.layout.simple_list_item_1, local );
+                linkAd = new LinkAdapter(this, android.R.layout.simple_list_item_1, local);
                 listView.setAdapter(linkAd);
                 return true;
             case R.id.action_add:
-                oclbtn();
-                links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(this));
-                local = new ArrayList<>(links);
-                linkAd = new LinkAdapter(this, android.R.layout.simple_list_item_1, local);
-                listView.setAdapter(linkAd);
+                addbutton();
                 return true;
 
             default:
