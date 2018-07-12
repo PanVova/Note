@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(x, Second.class);
                 int count = 0;
-                for (Link loc : links) {
+                for (Link loc : local) {
                     //
                     if(position==count)
                     {
