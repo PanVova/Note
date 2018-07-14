@@ -39,7 +39,7 @@ public class DatabaseInintializer {
     }
 
     private static void populateWithTestData(AppDatabase db) {
-        Link user = new Link("tipa_ssilka",1, "23");
+        Link user = new Link("tipa_ssilka",1, "23","SMTH");
         List<Link> userList = db.userDao().getAll();
         Log.d(DatabaseInintializer.TAG, "Rows Count: " + userList.size());
     }

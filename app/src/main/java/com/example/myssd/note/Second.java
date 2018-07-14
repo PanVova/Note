@@ -41,7 +41,8 @@ public class Second extends AppCompatActivity {
     List<Link> links = new ArrayList<>();
     ArrayList<Link> local;
     Bundle extras;
-String name_of_this_note;
+    String name_of_this_note;
+
     void sendMessage(String msg) {
         Intent myIntent = new Intent(Intent.ACTION_SEND);
         myIntent.setType("text/plain");
@@ -73,10 +74,12 @@ String name_of_this_note;
                     if (position == count) {
                         if (!TextUtils.isEmpty(input.getText().toString())) {
                             loc.setJust_link(input.getText().toString());
-                            loc.setStatus(spinner.getSelectedItemPosition()+1);
-                            DatabaseInintializer.UpdateLink(AppDatabase.getAppDatabase(x),loc);
-                            name_of_this_note=loc.getJust_link();
-                            start(loc.getJust_link(),loc.getStatus());
+                            loc.setStatus(spinner.getSelectedItemPosition() + 1);
+                            loc.setText(mBodyText.getText().toString());
+                            DatabaseInintializer.UpdateLink(AppDatabase.getAppDatabase(x), loc);
+                            name_of_this_note = loc.getJust_link();
+                            loc.setText(mBodyText.getText().toString());
+                            start(loc.getJust_link(), loc.getText(), loc.getStatus());
 
                         }
                         break;
@@ -93,8 +96,29 @@ String name_of_this_note;
         alert.show();
     }
 
-    void start(String name,int color) {
-        name_of_this_note=name;
+    void Save() {
+        int position = Integer.valueOf(extras.getString("position"));
+        links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(x));
+        local = new ArrayList<>(links);
+        int count = 0;
+        for (Link loc : local) {
+            if (position == count) {
+                if (!TextUtils.isEmpty(mBodyText.getText().toString())) {
+                    loc.setJust_link(getTitle().toString());
+                    loc.setText(mBodyText.getText().toString());
+                    DatabaseInintializer.UpdateLink(AppDatabase.getAppDatabase(x), loc);
+                    name_of_this_note = loc.getJust_link();
+                    start(loc.getJust_link(), loc.getText(), loc.getStatus());
+                }
+                break;
+            }
+            count++;
+        }
+    }
+
+    void start(String name, String text, int color) {
+        mBodyText.setText(text);
+        name_of_this_note = name;
         setTitle(name);
         switch (color) {
             case 1:
@@ -116,15 +140,21 @@ String name_of_this_note;
     }
 
     @Override
+    public void onBackPressed() {
+        Save();
+        finish();
+    }
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
         toolbar = findViewById(R.id.my_toolbar);
         extras = getIntent().getExtras();
-        // toolbar.setBackgroundColor(Color.parseColor("#80000000"));
         setSupportActionBar(toolbar);
         mBodyText = (EditText) findViewById(R.id.body);
-        start(extras.getString("name"),Integer.parseInt(extras.getString("color")));
+        start(extras.getString("name"), extras.getString("text"), Integer.parseInt(extras.getString("color")));
     }
 
     @Override
@@ -136,10 +166,6 @@ String name_of_this_note;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.save:
-                //добавить бд
-                Toast.makeText(getApplicationContext(), "Save ", Toast.LENGTH_SHORT).show();
-                return true;
             case R.id.share:
                 sendMessage(mBodyText.getText().toString());
                 return true;
@@ -164,7 +190,7 @@ String name_of_this_note;
             mRect = new Rect();
             mPaint = new Paint();
             mPaint.setStyle(Paint.Style.STROKE);
-            mPaint.setColor(Color.BLUE);
+            mPaint.setColor(Color.BLACK);
         }
 
         @Override

@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
     AlertDialog.Builder alert;
     Map<Link, String> sort_date = new HashMap<Link, String>();
     Map<Link, String> sort_alpha = new HashMap<Link, String>();
+   // ArrayList<String> names;
+    List<String> names = new ArrayList<>();
 
     void add() {
         LinearLayout lila1 = new LinearLayout(x);
@@ -64,19 +66,26 @@ public class MainActivity extends AppCompatActivity {
         alert.setTitle("Add note");
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int arg1) {
-                if (!TextUtils.isEmpty(input.getText().toString())) {
+                DatabaseInintializer.populateSync(AppDatabase.getAppDatabase(x));
+                links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(x));
+                for (Link loc : links) { names.add(loc.getJust_link()); }
+                if (!TextUtils.isEmpty(input.getText().toString()) && !names.contains(input.getText().toString()) ) {
                     int selected = spinner.getSelectedItemPosition();
                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                     Date date = new Date();
                     String date_local = dateFormat.format(date);
                     DatabaseInintializer.populateSync(AppDatabase.getAppDatabase(x));
-                    DatabaseInintializer.addLink(AppDatabase.getAppDatabase(x), new com.example.myssd.note.modul.Link(input.getText().toString(), selected + 1, date_local));
+                    DatabaseInintializer.addLink(AppDatabase.getAppDatabase(x), new com.example.myssd.note.modul.Link(input.getText().toString(), selected + 1, date_local, " "));
                     links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(x));
                     local = new ArrayList<>(links);
                     linkAd = new LinkAdapter(x, android.R.layout.simple_list_item_1, local);
                     listView.setAdapter(linkAd);
+                } else if(TextUtils.isEmpty(input.getText().toString())){
+                    Toast.makeText(x, "Name of your note is empty", Toast.LENGTH_LONG).show();
+                } else if(names.contains(input.getText().toString()))
+                {
+                    Toast.makeText(x, "This name is already exists", Toast.LENGTH_LONG).show();
                 }
-
             }
         });
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -174,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
                         i.putExtra("name", loc.getJust_link());
                         i.putExtra("color", String.valueOf(loc.getStatus()));
                         i.putExtra("position", String.valueOf(position));
+                        i.putExtra("text", String.valueOf(loc.getText()));
                         break;
                     }
                     count++;
