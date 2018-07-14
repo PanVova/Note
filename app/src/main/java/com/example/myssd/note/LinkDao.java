@@ -4,6 +4,8 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
+
 import com.example.myssd.note.modul.Link;
 
 import java.util.List;
@@ -20,11 +22,15 @@ public interface LinkDao {
     @Insert
     void insertAll(Link... links);
 
+    @Update
+    void update(Link link);
+
     @Delete
     void deleteAll(Link... links);
 
     @Query("SELECT COUNT(*) from LINK")
     int countLinks();
+
     @Query("DELETE FROM link")
     void delete();
 }

@@ -2,6 +2,7 @@ package com.example.myssd.note;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
@@ -10,19 +11,37 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.example.myssd.note.modul.Link;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class Second extends AppCompatActivity {
     private Toolbar toolbar;
     private EditText mBodyText;
-
+    Context x = this;
+    AlertDialog.Builder alert;
+    List<Link> links = new ArrayList<>();
+    ArrayList<Link> local;
+    Bundle extras;
+String name_of_this_note;
     void sendMessage(String msg) {
         Intent myIntent = new Intent(Intent.ACTION_SEND);
         myIntent.setType("text/plain");
@@ -30,17 +49,56 @@ public class Second extends AppCompatActivity {
         startActivity(myIntent);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_second);
-        toolbar = findViewById(R.id.my_toolbar);
-        Bundle extras = getIntent().getExtras();
-        // toolbar.setBackgroundColor(Color.parseColor("#80000000"));
-        setSupportActionBar(toolbar);
-        setTitle(extras.getString("name"));
-        mBodyText = (EditText) findViewById(R.id.body);
-        switch (Integer.parseInt(extras.getString("color"))) {
+    void Edit() {
+        LinearLayout lila1 = new LinearLayout(x);
+        final EditText input = new EditText(x);
+        Spinner spinner = new Spinner(x);
+        ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(this, R.array.colors, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        input.setText(name_of_this_note);
+        lila1.setOrientation(LinearLayout.VERTICAL);
+        lila1.addView(input);
+        lila1.addView(spinner);
+        alert = new AlertDialog.Builder(x);
+        alert.setView(lila1);
+        alert.setTitle("Add note");
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int arg1) {
+                int position = Integer.valueOf(extras.getString("position"));
+                links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(x));
+                local = new ArrayList<>(links);
+                int count = 0;
+                for (Link loc : local) {
+                    if (position == count) {
+                        if (!TextUtils.isEmpty(input.getText().toString())) {
+                            loc.setJust_link(input.getText().toString());
+                            loc.setStatus(spinner.getSelectedItemPosition()+1);
+                            DatabaseInintializer.UpdateLink(AppDatabase.getAppDatabase(x),loc);
+                            name_of_this_note=loc.getJust_link();
+                            start(loc.getJust_link(),loc.getStatus());
+
+                        }
+                        break;
+                    }
+                    count++;
+                }
+            }
+        });
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int arg1) {
+                Toast.makeText(x, "Cancel", Toast.LENGTH_LONG).show();
+            }
+        });
+        alert.show();
+
+
+    }
+
+    void start(String name,int color) {
+        name_of_this_note=name;
+        setTitle(name);
+        switch (color) {
             case 1:
                 mBodyText.setBackgroundColor(Color.GREEN);
                 break;
@@ -60,6 +118,18 @@ public class Second extends AppCompatActivity {
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_second);
+        toolbar = findViewById(R.id.my_toolbar);
+        extras = getIntent().getExtras();
+        // toolbar.setBackgroundColor(Color.parseColor("#80000000"));
+        setSupportActionBar(toolbar);
+        mBodyText = (EditText) findViewById(R.id.body);
+        start(extras.getString("name"),Integer.parseInt(extras.getString("color")));
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_second_main, menu);
         return true;
@@ -74,6 +144,9 @@ public class Second extends AppCompatActivity {
                 return true;
             case R.id.share:
                 sendMessage(mBodyText.getText().toString());
+                return true;
+            case R.id.edit:
+                Edit();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -46,7 +46,9 @@ public class DatabaseInintializer {
     public static int getCount(AppDatabase db){
         return db.userDao().countLinks();
     }
-
+    public static void UpdateLink(AppDatabase db, Link link){
+        db.userDao().update(link);
+    }
     private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
 
         private final AppDatabase mDb;
