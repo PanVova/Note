@@ -3,7 +3,6 @@ package com.example.myssd.note;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.renderscript.Sampler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -49,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     Map<Link, String> sort_date = new HashMap<Link, String>();
     Map<Link, String> sort_alpha = new HashMap<Link, String>();
 
-    void addbutton() {
+    void add() {
         LinearLayout lila1 = new LinearLayout(x);
         final EditText input = new EditText(x);
         Spinner spinner = new Spinner(x);
@@ -66,12 +65,12 @@ public class MainActivity extends AppCompatActivity {
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int arg1) {
                 if (!TextUtils.isEmpty(input.getText().toString())) {
-                    int selected =  spinner.getSelectedItemPosition();
+                    int selected = spinner.getSelectedItemPosition();
                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                     Date date = new Date();
                     String date_local = dateFormat.format(date);
                     DatabaseInintializer.populateSync(AppDatabase.getAppDatabase(x));
-                    DatabaseInintializer.addLink(AppDatabase.getAppDatabase(x), new com.example.myssd.note.modul.Link(input.getText().toString(), selected+1, date_local));
+                    DatabaseInintializer.addLink(AppDatabase.getAppDatabase(x), new com.example.myssd.note.modul.Link(input.getText().toString(), selected + 1, date_local));
                     links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(x));
                     local = new ArrayList<>(links);
                     linkAd = new LinkAdapter(x, android.R.layout.simple_list_item_1, local);
@@ -121,14 +120,43 @@ public class MainActivity extends AppCompatActivity {
         }
         return sortedHashMap;
     }
-    void UpdateDB()
-    {
+
+    void UpdateDB() {
         DatabaseInintializer.populateSync(AppDatabase.getAppDatabase(x));
         links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(this));
         local = new ArrayList<>(links);
         linkAd = new LinkAdapter(this, android.R.layout.simple_list_item_1, local);
         listView.setAdapter(linkAd);
     }
+
+    void Delete(int pos) {
+        alert = new AlertDialog.Builder(x);
+        alert.setTitle("Delete note");
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int arg1) {
+                links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(x));
+                local = new ArrayList<>(links);
+                int count = 0;
+                for (Link loc : local) {
+                    if (pos == count) {
+                        DatabaseInintializer.DeleteLink(AppDatabase.getAppDatabase(x), loc);
+                        UpdateDB();
+                        break;
+                    }
+                    count++;
+                }
+            }
+        });
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int arg1) {
+                Toast.makeText(x, "Cancel", Toast.LENGTH_LONG).show();
+            }
+        });
+        alert.show();
+
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(String.valueOf(position), loc.getJust_link());
                         i.putExtra("name", loc.getJust_link());
                         i.putExtra("color", String.valueOf(loc.getStatus()));
-                        i.putExtra("position",String.valueOf(position));
+                        i.putExtra("position", String.valueOf(position));
                         break;
                     }
                     count++;
@@ -153,38 +181,52 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+        listView.setLongClickable(true);
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+                Delete(pos);
+                return true;
+            }
+        });
 
         toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
         UpdateDB();
     }
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-
-        if(hasFocus) UpdateDB();
+        if (hasFocus) UpdateDB();
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.sort_date:
-                for (Link loc : links) {sort_date.put(loc, loc.getDate()); }
+                for (Link loc : links) {
+                    sort_date.put(loc, loc.getDate());
+                }
                 Map<Link, String> map = sortByDate((HashMap) sort_date);
                 local = new ArrayList<>(map.keySet());
                 linkAd = new LinkAdapter(this, android.R.layout.simple_list_item_1, local);
                 listView.setAdapter(linkAd);
                 return true;
             case R.id.sort_alphabetically:
-                for (Link loc : links) { sort_alpha.put(loc, loc.getJust_link()); }
+                for (Link loc : links) {
+                    sort_alpha.put(loc, loc.getJust_link());
+                }
                 Map<Link, String> map1 = sortByAlpha((HashMap) sort_alpha);
                 local = new ArrayList<>(map1.keySet());
                 linkAd = new LinkAdapter(this, android.R.layout.simple_list_item_1, local);
                 listView.setAdapter(linkAd);
                 return true;
             case R.id.action_add:
-                addbutton();
+                add();
                 return true;
-            default: return super.onOptionsItemSelected(item);
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

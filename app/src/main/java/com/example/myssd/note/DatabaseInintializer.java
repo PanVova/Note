@@ -49,6 +49,9 @@ public class DatabaseInintializer {
     public static void UpdateLink(AppDatabase db, Link link){
         db.userDao().update(link);
     }
+    public static void DeleteLink(AppDatabase db, Link link){
+        db.userDao().delete(link);
+    }
     private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
 
         private final AppDatabase mDb;

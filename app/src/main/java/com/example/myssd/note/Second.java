@@ -62,7 +62,7 @@ String name_of_this_note;
         lila1.addView(spinner);
         alert = new AlertDialog.Builder(x);
         alert.setView(lila1);
-        alert.setTitle("Add note");
+        alert.setTitle("Edit note");
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int arg1) {
                 int position = Integer.valueOf(extras.getString("position"));
@@ -91,8 +91,6 @@ String name_of_this_note;
             }
         });
         alert.show();
-
-
     }
 
     void start(String name,int color) {
