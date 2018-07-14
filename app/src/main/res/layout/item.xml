@@ -1,14 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tvDescr"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:ellipsize="end"
-    android:maxLines="3"
-    android:padding="10dp"
-    android:text=""
-    android:textSize="20sp"
-    tools:text="http://www.mytinyphone.com/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/uploads/users/nekopikachu/539785.jpg"></TextView>
+    android:layout_height="match_parent">
 
+        android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvDescr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:text="@string/bottom_sheet_behavior"
+            android:textSize="20sp"></TextView>
+
+        <TextView
+            android:id="@+id/tvPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="2"
+            android:text="@string/title_activity_second"
+            android:textAlignment="textEnd"
+            android:textSize="20sp"></TextView>
+    </LinearLayout>
+    </LinearLayout>

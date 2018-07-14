@@ -40,9 +40,7 @@ public class LinkAdapter extends ArrayAdapter<Link> {
 
     // элемент по позиции
     @Override
-    public Link getItem(int position) {
-        return items.get(position);
-    }
+    public Link getItem(int position) { return items.get(position); }
 
     // id по позиции
     @Override
@@ -58,12 +56,20 @@ public class LinkAdapter extends ArrayAdapter<Link> {
         if (mView == null) {
             mView = lInflater.inflate(R.layout.item, parent, false);
         }
+        Link link = getLink(position);
+        TextView textl = ((TextView) mView.findViewById(R.id.tvDescr));
+        textl.setText(link.getJust_link());
+
+        TextView textr = ((TextView) mView.findViewById(R.id.tvPrice));
+        textr.setText(link.getDate());
+		
 
         com.example.myssd.note.modul.Link s = getItem(position);
-        TextView text = (TextView) mView.findViewById(R.id.tvDescr);
+//        TextView text = (TextView) mView.findViewById(R.id.tvDescr);
 
-        text.setText(s.getJust_link());
-        text.setTextColor(Color.BLACK);
+//        text.setText(s.getJust_link());
+        textl.setTextColor(Color.BLACK);
+        textr.setTextColor(Color.BLACK);
 
         //а вот тут собсн и происходит установка цвета бэкграунда по статусу ссылки (пока что стрингов)
         if(s.getStatus()==1){
@@ -83,6 +89,11 @@ public class LinkAdapter extends ArrayAdapter<Link> {
         }
 
         return mView;
+    }
+
+    // ссылка по позиции
+    Link getLink(int position) {
+        return ((Link) getItem(position));
     }
 
 
