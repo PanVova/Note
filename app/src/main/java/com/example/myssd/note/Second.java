@@ -40,7 +40,23 @@ public class Second extends AppCompatActivity {
         setSupportActionBar(toolbar);
         setTitle(extras.getString("name"));
         mBodyText = (EditText) findViewById(R.id.body);
-
+        switch (Integer.parseInt(extras.getString("color"))) {
+            case 1:
+                mBodyText.setBackgroundColor(Color.GREEN);
+                break;
+            case 2:
+                mBodyText.setBackgroundColor(Color.RED);
+                break;
+            case 3:
+                mBodyText.setBackgroundColor(Color.GRAY);
+                break;
+            case 4:
+                mBodyText.setBackgroundColor(Color.CYAN);
+                break;
+            case 5:
+                mBodyText.setBackgroundColor(Color.YELLOW);
+                break;
+        }
     }
 
     @Override

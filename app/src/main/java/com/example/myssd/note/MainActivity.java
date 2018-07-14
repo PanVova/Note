@@ -3,6 +3,7 @@ package com.example.myssd.note;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.renderscript.Sampler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,9 +12,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
@@ -48,20 +51,26 @@ public class MainActivity extends AppCompatActivity {
     void addbutton() {
         LinearLayout lila1 = new LinearLayout(x);
         final EditText input = new EditText(x);
+        Spinner spinner = new Spinner(x);
+        ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(this, R.array.colors, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
         input.setHint("Name");
         lila1.setOrientation(LinearLayout.VERTICAL);
         lila1.addView(input);
+        lila1.addView(spinner);
         alert = new AlertDialog.Builder(x);
         alert.setView(lila1);
         alert.setTitle("Add note");
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int arg1) {
                 if (input.getText().toString() != null) {
+                    int selected =  spinner.getSelectedItemPosition();
                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                     Date date = new Date();
                     String date_local = dateFormat.format(date);
                     DatabaseInintializer.populateSync(AppDatabase.getAppDatabase(x));
-                    DatabaseInintializer.addLink(AppDatabase.getAppDatabase(x), new com.example.myssd.note.modul.Link(input.getText().toString(), 1, date_local));
+                    DatabaseInintializer.addLink(AppDatabase.getAppDatabase(x), new com.example.myssd.note.modul.Link(input.getText().toString(), selected+1, date_local));
                     links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(x));
                     local = new ArrayList<>(links);
                     linkAd = new LinkAdapter(x, android.R.layout.simple_list_item_1, local);
@@ -129,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
                     {
                         Log.d(String.valueOf(position), loc.getJust_link());
                         i.putExtra( "name",loc.getJust_link());
+                        i.putExtra("color",String.valueOf(loc.getStatus()));
                         break;
                     }
                     count++;

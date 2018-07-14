@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">Note</string>
     <string name="title_activity_second">Second</string>
+    <string-array name="colors">
+        <item>Green</item>
+        <item>Red</item>
+        <item>Gray</item>
+        <item>Cyan</item>
+        <item>Yellow</item>
+    </string-array>
 </resources>

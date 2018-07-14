@@ -72,8 +72,14 @@ public class LinkAdapter extends ArrayAdapter<Link> {
         else if(s.getStatus()==2){
             mView.setBackgroundColor(Color.RED);
         }
-        else{
+        else if(s.getStatus()==3){
             mView.setBackgroundColor(Color.GRAY);
+        }
+        else if(s.getStatus()==4){
+            mView.setBackgroundColor(Color.CYAN);
+        }
+        else if(s.getStatus()==5){
+            mView.setBackgroundColor(Color.YELLOW);
         }
 
         return mView;
