@@ -14,18 +14,9 @@ public class DatabaseInintializer {
 
     private static final String TAG = DatabaseInintializer.class.getName();
 
-    public static void populateAsync(@NonNull final AppDatabase db) {
-        PopulateDbAsync task = new PopulateDbAsync(db);
-        task.execute();
-    }
-
     public static void populateSync(@NonNull final AppDatabase db) {
         populateWithTestData(db);
     }
-
-    /*public static void GetpopulateSync(@NonNull final AppDatabase db) {
-        populateWithTestData(db);
-    }*/
 
     public static Link addLink(final AppDatabase db, Link link) {
         db.userDao().insertAll(link);
@@ -39,7 +30,7 @@ public class DatabaseInintializer {
     }
 
     private static void populateWithTestData(AppDatabase db) {
-        Link user = new Link("tipa_ssilka",1, "23","SMTH");
+        Link user = new Link("smth",1, "23","SMTH");
         List<Link> userList = db.userDao().getAll();
         Log.d(DatabaseInintializer.TAG, "Rows Count: " + userList.size());
     }
@@ -53,13 +44,10 @@ public class DatabaseInintializer {
         db.userDao().delete(link);
     }
     private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
-
         private final AppDatabase mDb;
-
         PopulateDbAsync(AppDatabase db) {
             mDb = db;
         }
-
         @Override
         protected Void doInBackground(final Void... params) {
             populateWithTestData(mDb);

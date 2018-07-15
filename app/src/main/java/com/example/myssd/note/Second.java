@@ -2,21 +2,17 @@ package com.example.myssd.note;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -24,13 +20,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.example.myssd.note.modul.Link;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Second extends AppCompatActivity {
@@ -64,35 +55,29 @@ public class Second extends AppCompatActivity {
         alert = new AlertDialog.Builder(x);
         alert.setView(lila1);
         alert.setTitle("Edit note");
-        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int arg1) {
-                int position = Integer.valueOf(extras.getString("position"));
-                links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(x));
-                local = new ArrayList<>(links);
-                int count = 0;
-                for (Link loc : local) {
-                    if (position == count) {
-                        if (!TextUtils.isEmpty(input.getText().toString())) {
-                            loc.setJust_link(input.getText().toString());
-                            loc.setStatus(spinner.getSelectedItemPosition() + 1);
-                            loc.setText(mBodyText.getText().toString());
-                            DatabaseInintializer.UpdateLink(AppDatabase.getAppDatabase(x), loc);
-                            name_of_this_note = loc.getJust_link();
-                            loc.setText(mBodyText.getText().toString());
-                            start(loc.getJust_link(), loc.getText(), loc.getStatus());
+        alert.setPositiveButton("OK", (dialog, arg1) -> {
+            int position = Integer.valueOf(extras.getString("position"));
+            links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(x));
+            local = new ArrayList<>(links);
+            int count = 0;
+            for (Link loc : local) {
+                if (position == count) {
+                    if (!TextUtils.isEmpty(input.getText().toString())) {
+                        loc.setJust_link(input.getText().toString());
+                        loc.setStatus(spinner.getSelectedItemPosition() + 1);
+                        loc.setText(mBodyText.getText().toString());
+                        DatabaseInintializer.UpdateLink(AppDatabase.getAppDatabase(x), loc);
+                        name_of_this_note = loc.getJust_link();
+                        loc.setText(mBodyText.getText().toString());
+                        start(loc.getJust_link(), loc.getText(), loc.getStatus());
 
-                        }
-                        break;
                     }
-                    count++;
+                    break;
                 }
+                count++;
             }
         });
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int arg1) {
-                Toast.makeText(x, "Cancel", Toast.LENGTH_LONG).show();
-            }
-        });
+        alert.setNegativeButton("Cancel", (dialog, arg1) -> Toast.makeText(x, "Cancel", Toast.LENGTH_LONG).show());
         alert.show();
     }
 
@@ -122,19 +107,19 @@ public class Second extends AppCompatActivity {
         setTitle(name);
         switch (color) {
             case 1:
-                mBodyText.setBackgroundColor(Color.GREEN);
+                mBodyText.setBackgroundColor(getResources().getColor(R.color.LightGreen));
                 break;
             case 2:
-                mBodyText.setBackgroundColor(Color.RED);
+                mBodyText.setBackgroundColor(getResources().getColor(R.color.Crimson));
                 break;
             case 3:
-                mBodyText.setBackgroundColor(Color.GRAY);
+                mBodyText.setBackgroundColor(getResources().getColor(R.color.LightGrey));
                 break;
             case 4:
-                mBodyText.setBackgroundColor(Color.CYAN);
+                mBodyText.setBackgroundColor(getResources().getColor(R.color.LightCyan));
                 break;
             case 5:
-                mBodyText.setBackgroundColor(Color.YELLOW);
+                mBodyText.setBackgroundColor(getResources().getColor(R.color.LightYellow));
                 break;
         }
     }

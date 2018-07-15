@@ -1,7 +1,6 @@
 package com.example.myssd.note;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -10,8 +9,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -19,9 +16,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
-
 import com.example.myssd.note.modul.Link;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,7 +29,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 public class MainActivity extends AppCompatActivity {
     String name;
     ListView listView;
@@ -47,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     AlertDialog.Builder alert;
     Map<Link, String> sort_date = new HashMap<Link, String>();
     Map<Link, String> sort_alpha = new HashMap<Link, String>();
-   // ArrayList<String> names;
     List<String> names = new ArrayList<>();
 
     void add() {
@@ -64,35 +57,29 @@ public class MainActivity extends AppCompatActivity {
         alert = new AlertDialog.Builder(x);
         alert.setView(lila1);
         alert.setTitle("Add note");
-        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int arg1) {
+        alert.setPositiveButton("OK", (dialog, arg1) -> {
+            DatabaseInintializer.populateSync(AppDatabase.getAppDatabase(x));
+            links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(x));
+            for (Link loc : links) { names.add(loc.getJust_link()); }
+            if (!TextUtils.isEmpty(input.getText().toString()) && !names.contains(input.getText().toString()) ) {
+                int selected = spinner.getSelectedItemPosition();
+                DateFormat dateFormat = new SimpleDateFormat("MMM dd yyyy");
+                Date date = new Date();
+                String date_local = dateFormat.format(date);
                 DatabaseInintializer.populateSync(AppDatabase.getAppDatabase(x));
+                DatabaseInintializer.addLink(AppDatabase.getAppDatabase(x), new Link(input.getText().toString(), selected + 1, date_local, " "));
                 links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(x));
-                for (Link loc : links) { names.add(loc.getJust_link()); }
-                if (!TextUtils.isEmpty(input.getText().toString()) && !names.contains(input.getText().toString()) ) {
-                    int selected = spinner.getSelectedItemPosition();
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                    Date date = new Date();
-                    String date_local = dateFormat.format(date);
-                    DatabaseInintializer.populateSync(AppDatabase.getAppDatabase(x));
-                    DatabaseInintializer.addLink(AppDatabase.getAppDatabase(x), new com.example.myssd.note.modul.Link(input.getText().toString(), selected + 1, date_local, " "));
-                    links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(x));
-                    local = new ArrayList<>(links);
-                    linkAd = new LinkAdapter(x, android.R.layout.simple_list_item_1, local);
-                    listView.setAdapter(linkAd);
-                } else if(TextUtils.isEmpty(input.getText().toString())){
-                    Toast.makeText(x, "Name of your note is empty", Toast.LENGTH_LONG).show();
-                } else if(names.contains(input.getText().toString()))
-                {
-                    Toast.makeText(x, "This name is already exists", Toast.LENGTH_LONG).show();
-                }
+                local = new ArrayList<>(links);
+                linkAd = new LinkAdapter(x, android.R.layout.simple_list_item_1, local);
+                listView.setAdapter(linkAd);
+            } else if(TextUtils.isEmpty(input.getText().toString())){
+                Toast.makeText(x, "Name of your note is empty", Toast.LENGTH_LONG).show();
+            } else if(names.contains(input.getText().toString()))
+            {
+                Toast.makeText(x, "This name is already exists", Toast.LENGTH_LONG).show();
             }
         });
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int arg1) {
-                Toast.makeText(x, "Cancel", Toast.LENGTH_LONG).show();
-            }
-        });
+        alert.setNegativeButton("Cancel", (dialog, arg1) -> Toast.makeText(x, "Cancel", Toast.LENGTH_LONG).show());
         alert.show();
 
 
@@ -101,11 +88,7 @@ public class MainActivity extends AppCompatActivity {
     private static HashMap sortByDate(HashMap map) {
         List list = new LinkedList(map.entrySet());
         // Defined Custom Comparator here
-        Collections.sort(list, new Comparator() {
-            public int compare(Object o1, Object o2) {
-                return ((Comparable) ((Map.Entry) (o2)).getValue()).compareTo(((Map.Entry) (o1)).getValue());
-            }
-        });
+        Collections.sort(list, (Comparator) (o1, o2) -> ((Comparable) ((Map.Entry) (o2)).getValue()).compareTo(((Map.Entry) (o1)).getValue()));
         HashMap sortedHashMap = new LinkedHashMap();
         for (Iterator it = list.iterator(); it.hasNext(); ) {
             Map.Entry entry = (Map.Entry) it.next();
@@ -117,11 +100,7 @@ public class MainActivity extends AppCompatActivity {
     private static HashMap sortByAlpha(HashMap map) {
         List list = new LinkedList(map.entrySet());
         // Defined Custom Comparator here
-        Collections.sort(list, new Comparator() {
-            public int compare(Object o1, Object o2) {
-                return ((Comparable) ((Map.Entry) (o1)).getValue()).compareTo(((Map.Entry) (o2)).getValue());
-            }
-        });
+        Collections.sort(list, (Comparator) (o1, o2) -> ((Comparable) ((Map.Entry) (o1)).getValue()).compareTo(((Map.Entry) (o2)).getValue()));
         HashMap sortedHashMap = new LinkedHashMap();
         for (Iterator it = list.iterator(); it.hasNext(); ) {
             Map.Entry entry = (Map.Entry) it.next();
@@ -141,26 +120,20 @@ public class MainActivity extends AppCompatActivity {
     void Delete(int pos) {
         alert = new AlertDialog.Builder(x);
         alert.setTitle("Delete note");
-        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int arg1) {
-                links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(x));
-                local = new ArrayList<>(links);
-                int count = 0;
-                for (Link loc : local) {
-                    if (pos == count) {
-                        DatabaseInintializer.DeleteLink(AppDatabase.getAppDatabase(x), loc);
-                        UpdateDB();
-                        break;
-                    }
-                    count++;
+        alert.setPositiveButton("OK", (dialog, arg1) -> {
+            links = DatabaseInintializer.getLinks(AppDatabase.getAppDatabase(x));
+            local = new ArrayList<>(links);
+            int count = 0;
+            for (Link loc : local) {
+                if (pos == count) {
+                    DatabaseInintializer.DeleteLink(AppDatabase.getAppDatabase(x), loc);
+                    UpdateDB();
+                    break;
                 }
+                count++;
             }
         });
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int arg1) {
-                Toast.makeText(x, "Cancel", Toast.LENGTH_LONG).show();
-            }
-        });
+        alert.setNegativeButton("Cancel", (dialog, arg1) -> Toast.makeText(x, "Cancel", Toast.LENGTH_LONG).show());
         alert.show();
 
 
@@ -171,33 +144,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         listView = (ListView) findViewById(R.id.listview);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(x, Second.class);
-                int count = 0;
-                for (Link loc : local) {
-                    //
-                    if (position == count) {
-                        Log.d(String.valueOf(position), loc.getJust_link());
-                        i.putExtra("name", loc.getJust_link());
-                        i.putExtra("color", String.valueOf(loc.getStatus()));
-                        i.putExtra("position", String.valueOf(position));
-                        i.putExtra("text", String.valueOf(loc.getText()));
-                        break;
-                    }
-                    count++;
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            Intent i = new Intent(x, Second.class);
+            int count = 0;
+            for (Link loc : local) {
+                //
+                if (position == count) {
+                    Log.d(String.valueOf(position), loc.getJust_link());
+                    i.putExtra("name", loc.getJust_link());
+                    i.putExtra("color", String.valueOf(loc.getStatus()));
+                    i.putExtra("position", String.valueOf(position));
+                    i.putExtra("text", String.valueOf(loc.getText()));
+                    break;
                 }
-                startActivity(i);
+                count++;
             }
+            startActivity(i);
         });
         listView.setLongClickable(true);
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
-                Delete(pos);
-                return true;
-            }
+        listView.setOnItemLongClickListener((arg0, arg1, pos, id) -> {
+            Delete(pos);
+            return true;
         });
 
         toolbar = findViewById(R.id.my_toolbar);

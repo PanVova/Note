@@ -1,13 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <!-- "Mark Favorite", should appear as action button if possible -->
     <item
         android:id="@+id/sort_date"
         android:title="sort by date"
         app:showAsAction="never" />
-
-    <!-- Settings, should always be in the overflow -->
     <item
         android:id="@+id/sort_alphabetically"
         android:title="alphabetically"
@@ -17,5 +13,4 @@
         android:icon="@drawable/plus"
         android:title="ADD"
         app:showAsAction="ifRoom" />
-
 </menu>

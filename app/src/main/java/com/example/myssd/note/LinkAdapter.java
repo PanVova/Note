@@ -3,18 +3,17 @@ package com.example.myssd.note;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import com.example.myssd.note.modul.Link;
-
 import java.util.ArrayList;
 
 
-//Кастомный адаптер для возможности менять цветик в ячеечках
+//Custom adapter
 public class LinkAdapter extends ArrayAdapter<Link> {
 
     private Context mContext;
@@ -31,18 +30,16 @@ public class LinkAdapter extends ArrayAdapter<Link> {
         lInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    // кол-во элементов
-
     @Override
     public int getCount() {
         return items.size();
     }
 
-    // элемент по позиции
+    // position of element
     @Override
     public Link getItem(int position) { return items.get(position); }
 
-    // id по позиции
+    // id
     @Override
     public long getItemId(int position) {
         return position;
@@ -62,40 +59,21 @@ public class LinkAdapter extends ArrayAdapter<Link> {
 
         TextView textr = ((TextView) mView.findViewById(R.id.tvPrice));
         textr.setText(link.getDate());
-		
+        Log.d(link.getDate(),link.getDate());
 
         com.example.myssd.note.modul.Link s = getItem(position);
-//        TextView text = (TextView) mView.findViewById(R.id.tvDescr);
 
-//        text.setText(s.getJust_link());
         textl.setTextColor(Color.BLACK);
         textr.setTextColor(Color.BLACK);
 
-        //а вот тут собсн и происходит установка цвета бэкграунда по статусу ссылки (пока что стрингов)
-        if(s.getStatus()==1){
-            mView.setBackgroundColor(Color.GREEN);
-        }
-        else if(s.getStatus()==2){
-            mView.setBackgroundColor(Color.RED);
-        }
-        else if(s.getStatus()==3){
-            mView.setBackgroundColor(Color.GRAY);
-        }
-        else if(s.getStatus()==4){
-            mView.setBackgroundColor(Color.CYAN);
-        }
-        else if(s.getStatus()==5){
-            mView.setBackgroundColor(Color.YELLOW);
-        }
-
+        if(s.getStatus()==1){ mView.setBackgroundColor(mContext.getResources().getColor(R.color.LightGreen)); }
+        else if(s.getStatus()==2){ mView.setBackgroundColor(mContext.getResources().getColor(R.color.Crimson)); }
+        else if(s.getStatus()==3){ mView.setBackgroundColor(mContext.getResources().getColor(R.color.LightGrey)); }
+        else if(s.getStatus()==4){ mView.setBackgroundColor(mContext.getResources().getColor(R.color.LightCyan)); }
+        else if(s.getStatus()==5){ mView.setBackgroundColor(mContext.getResources().getColor(R.color.LightYellow)); }
         return mView;
     }
-
-    // ссылка по позиции
-    Link getLink(int position) {
-        return ((Link) getItem(position));
-    }
-
-
+    // link of position
+    Link getLink(int position) { return ((Link) getItem(position)); }
 }
 

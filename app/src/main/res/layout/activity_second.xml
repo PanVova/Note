@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Second"
-    android:background="@drawable/background">
+   >
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
@@ -14,29 +14,14 @@
         android:background="#00BFFF" />
 
     <view
-
         xmlns:android="http://schemas.android.com/apk/res/android"
-
         android:id="@+id/body"
-
         class="com.example.myssd.note.Second$LinedEditText"
-
         android:layout_width="match_parent"
-
-        android:layout_height="522dp"
-
-        android:layout_alignParentStart="true"
-
-        android:layout_alignParentTop="true"
-
+        android:layout_height="match_parent"
         android:layout_marginTop="45dp"
-
         android:background="@android:color/transparent"
-
-        android:capitalize="sentences"
-
-        android:fadingEdge="vertical"
-
+        android:fadingEdge="none|vertical"
         android:gravity="top"
         android:padding="10dp"
         android:scrollbars="vertical"

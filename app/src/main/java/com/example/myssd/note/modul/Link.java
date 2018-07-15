@@ -25,7 +25,6 @@ public class Link {
     private String date;
 
     public Link(String just_link, int status, String date, String text) {
-
         this.just_link = just_link;
         this.status = status;
         this.date = date;
