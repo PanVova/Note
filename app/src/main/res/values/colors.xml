@@ -8,4 +8,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="Cyan">#00FFFF</color>
+    <color name="Red">#FF0000</color>
+    <color name="Gray">#808080</color>
+    <color name="lightyellow">#FFFFE0</color>
+
 </resources>

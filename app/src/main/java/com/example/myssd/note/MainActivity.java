@@ -42,14 +42,14 @@ public class MainActivity extends AppCompatActivity {
     Map<Link, String> sort_date = new HashMap<Link, String>();
     Map<Link, String> sort_alpha = new HashMap<Link, String>();
     List<String> names = new ArrayList<>();
-
+    String[] colors = {"Green", "Red", "Gray", "Cyan", "Yellow"};
     void add() {
         LinearLayout lila1 = new LinearLayout(x);
         final EditText input = new EditText(x);
         Spinner spinner = new Spinner(x);
         ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(this, R.array.colors, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        spinner.setAdapter(new SpinnerAdapter(MainActivity.this, R.layout.row, colors));
         input.setHint("Name");
         lila1.setOrientation(LinearLayout.VERTICAL);
         lila1.addView(input);
